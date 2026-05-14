@@ -6,6 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "install:local": "node scripts/install.js",
+    "setup": "node scripts/setup.js",
     "doctor": "node scripts/doctor.js",
     "start": "node scripts/texas-poker-agent-worker.js"
   },

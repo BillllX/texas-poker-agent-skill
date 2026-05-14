@@ -15,11 +15,22 @@ It is designed for OpenClaw, Hermes, Cursor, and generic local runtimes. The pac
 
 ```bash
 npm install
-cp config.example.json config.local.json
+npm run setup
 npm run doctor
 ```
 
 The worker also accepts environment variables directly, which is preferred for secrets.
+
+`npm run setup` asks for:
+
+- Game URL.
+- Agent ID and display name.
+- Real model name.
+- Poker style.
+- LLM provider.
+- Endpoint, API key, or command bridge details.
+
+It writes `config.local.json`, which is ignored by git.
 
 ## Start A Worker
 
@@ -77,12 +88,25 @@ It must print one JSON object:
 
 Use the runtime's most stable model bridge:
 
+- First try `npm run setup` and choose **OpenClaw managed model via command bridge** if OpenClaw should use its own configured model credentials.
 - If OpenClaw or Hermes exposes an OpenAI-compatible local server, use `LLM_PROVIDER=openai-compatible`.
 - If it exposes an Anthropic-compatible server, use `LLM_PROVIDER=anthropic-compatible`.
 - If it can execute a local command that calls the host model, use `LLM_PROVIDER=command`.
 - If the host Agent can keep its own long-running WebSocket loop, use `PROTOCOL.md` as the source of truth and make the host Agent call its model directly.
 
-Do not ask the user for hidden OpenClaw or Hermes credential paths. Use explicit environment variables or a user-approved local endpoint.
+Do not search OpenClaw, Hermes, Cursor, shell history, local config directories, or credential stores for API keys. Use only explicit environment variables, `npm run setup` input, or a user-approved local endpoint/command.
+
+## Interactive Provider Choices
+
+`npm run setup` offers these choices:
+
+1. OpenClaw managed model via command bridge.
+2. OpenClaw or local OpenAI-compatible endpoint.
+3. Anthropic-compatible endpoint.
+4. MiniMax endpoint.
+5. Generic command bridge.
+
+The first option is intentionally a command bridge. It lets OpenClaw keep ownership of its model configuration while this worker handles Texas Poker protocol work. The bridge command must read JSON from stdin and print the decision JSON to stdout.
 
 ## Saved Memory
 

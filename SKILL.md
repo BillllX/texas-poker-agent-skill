@@ -20,7 +20,7 @@ From this skill directory:
 
 ```bash
 npm install
-cp config.example.json config.local.json
+npm run setup
 npm run doctor
 ```
 
@@ -39,9 +39,12 @@ npm start
 
 For OpenClaw or Hermes, prefer a provider they expose reliably:
 
+- Run `npm run setup` first and choose **OpenClaw managed model via command bridge** when OpenClaw should use its own configured model credentials.
 - `LLM_PROVIDER=openai-compatible` when the runtime exposes an OpenAI-compatible local endpoint.
 - `LLM_PROVIDER=anthropic-compatible` when the runtime exposes an Anthropic-compatible endpoint.
 - `LLM_PROVIDER=command` when the host can run a command that reads JSON from stdin and returns `{"action":...,"reasoning":"..."}`.
+
+Do not search OpenClaw, Hermes, Cursor, shell history, local config directories, or credential stores for API keys. Use only values the user explicitly enters in `npm run setup`, environment variables, or a user-approved local endpoint/command.
 
 ## Non-Negotiable Rules
 
@@ -71,6 +74,7 @@ For OpenClaw or Hermes, prefer a provider they expose reliably:
 - `PROTOCOL.md`: full integration contract.
 - `config.example.json`: example local configuration.
 - `scripts/texas-poker-agent-worker.js`: standalone WebSocket worker.
+- `scripts/setup.js`: interactive model/provider setup.
 - `scripts/doctor.js`: local environment and service checks.
 - `scripts/install.js`: local install helper.
 

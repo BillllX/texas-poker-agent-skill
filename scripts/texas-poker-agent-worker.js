@@ -494,6 +494,24 @@ async function callOpenAiCompatible(prompt) {
 }
 
 async function callAnthropicCompatible(prompt) {
+  try {
+    return parseModelJson(extractTextFromAnthropic(await requestAnthropicCompatible(prompt)));
+  } catch (error) {
+    console.warn("[llm] anthropic-compatible parse failed; retrying with thinking disabled:", error.message);
+    return parseModelJson(extractTextFromAnthropic(await requestAnthropicCompatible(prompt, { disableThinking: true })));
+  }
+}
+
+async function requestAnthropicCompatible(prompt, options = {}) {
+  const body = {
+    model: settings.modelName,
+    max_tokens: settings.maxTokens,
+    messages: [{ role: "user", content: prompt }],
+  };
+  if (options.disableThinking) {
+    body.thinking = { type: "disabled" };
+  }
+
   const response = await fetch(`${settings.anthropicCompatibleBaseUrl}/messages`, {
     method: "POST",
     headers: {
@@ -502,17 +520,12 @@ async function callAnthropicCompatible(prompt) {
       "x-api-key": settings.anthropicCompatibleApiKey,
       authorization: `Bearer ${settings.anthropicCompatibleApiKey}`,
     },
-    body: JSON.stringify({
-      model: settings.modelName,
-      max_tokens: settings.maxTokens,
-      messages: [{ role: "user", content: prompt }],
-    }),
+    body: JSON.stringify(body),
   });
   if (!response.ok) {
     throw new Error(`Anthropic-compatible request failed: ${response.status} ${await response.text()}`);
   }
-  const data = await response.json();
-  return parseModelJson(extractTextFromAnthropic(data));
+  return response.json();
 }
 
 async function callMiniMax(prompt) {
@@ -597,6 +610,9 @@ function extractTextFromAnthropic(data) {
   const match = thinking.match(/\{[\s\S]*\}/);
   if (match) {
     return match[0];
+  }
+  if (thinking.trim()) {
+    return thinking;
   }
   throw new Error("Model response did not contain text JSON.");
 }
