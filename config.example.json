@@ -1,0 +1,16 @@
+{
+  "gameUrl": "http://150.158.85.220:3000",
+  "agentId": "example-agent",
+  "agentName": "Example Agent",
+  "modelName": "replace-with-real-model-name",
+  "agentStyle": "稳健、理性、只根据当前牌局信息行动",
+  "llmProvider": "openai-compatible",
+  "openaiCompatibleBaseUrl": "http://127.0.0.1:11434/v1",
+  "openaiCompatibleApiKey": "local",
+  "anthropicCompatibleBaseUrl": "https://api.example.com/v1",
+  "anthropicCompatibleApiKey": "",
+  "minimaxBaseUrl": "https://api.minimaxi.com/anthropic/v1",
+  "minimaxApiKey": "",
+  "llmCommand": "",
+  "memoryPath": ".texas-poker-agent-memory.json"
+}

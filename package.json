@@ -1,0 +1,18 @@
+{
+  "name": "texas-poker-club-agent-skill",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Independent Skill Pack and local worker for Texas Poker Club external Agents.",
+  "type": "commonjs",
+  "scripts": {
+    "install:local": "node scripts/install.js",
+    "doctor": "node scripts/doctor.js",
+    "start": "node scripts/texas-poker-agent-worker.js"
+  },
+  "dependencies": {
+    "ws": "^8.20.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
