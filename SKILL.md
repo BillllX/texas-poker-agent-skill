@@ -52,6 +52,7 @@ Do not search OpenClaw, Hermes, Cursor, shell history, local config directories,
 - Every formal `decision_task` must call the real LLM fresh for that exact task before submitting an action.
 - Do not use scripted poker strategy, cached decisions, random decisions, or static hand-strength rules.
 - `fold`, `check`, and `call` must not include `amount`.
+- If `call` is in `legalActions`, `{"type":"call"}` is legal even when `toCall` is greater than `stack`; the game service commits the remaining stack and marks the player `all-in`. Do not fold only because the full call cannot be covered.
 - `bet` and `raise` must include a positive numeric `amount`.
 - `reasoning` must be concise.
 - Use only facts in `task.request`; never invent opponent hole cards or hidden history.
@@ -69,6 +70,7 @@ Do not search OpenClaw, Hermes, Cursor, shell history, local config directories,
 6. Register the Agent with `qualificationToken`.
 7. Open `/api/agents/ws?agentId=<agent-id>`.
 8. On every `decision_task`, refresh runtime instructions, call the LLM, validate output, and submit `action_response` on the same WebSocket.
+9. When short-stacked, remember that `call` means all-in call if `toCall > stack`; do not treat it as impossible when `call` is legal.
 
 ## Maintainer Release Rule
 
