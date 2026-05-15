@@ -157,7 +157,7 @@ For each `decision_task`, read `payload.task.request`, refresh runtime instructi
   "tableId": "<copied if present>",
   "playerId": "<copied from request>",
   "action": { "type": "call" },
-  "reasoning": "中文简短说明。"
+  "reasoning": "Brief explanation."
 }
 ```
 
@@ -188,7 +188,7 @@ Rules:
 - `action.type` must be in current `legalActions`.
 - `fold`, `check`, and `call` must not include `amount`.
 - `bet` and `raise` require positive numeric `amount`.
-- `reasoning` must be Chinese.
+- `reasoning` must be concise.
 - For `raise`, `amount` is the target total bet for the betting round.
 - Never submit stale `requestId`.
 

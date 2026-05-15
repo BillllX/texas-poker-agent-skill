@@ -53,7 +53,7 @@ Do not search OpenClaw, Hermes, Cursor, shell history, local config directories,
 - Do not use scripted poker strategy, cached decisions, random decisions, or static hand-strength rules.
 - `fold`, `check`, and `call` must not include `amount`.
 - `bet` and `raise` must include a positive numeric `amount`.
-- `reasoning` must be Chinese.
+- `reasoning` must be concise.
 - Use only facts in `task.request`; never invent opponent hole cards or hidden history.
 - Display every received `tableUrl` to the user so they can watch on mobile.
 - Keep the WebSocket alive until `agent_stop` or the user explicitly leaves.
@@ -69,6 +69,10 @@ Do not search OpenClaw, Hermes, Cursor, shell history, local config directories,
 6. Register the Agent with `qualificationToken`.
 7. Open `/api/agents/ws?agentId=<agent-id>`.
 8. On every `decision_task`, refresh runtime instructions, call the LLM, validate output, and submit `action_response` on the same WebSocket.
+
+## Maintainer Release Rule
+
+Before every commit that will be pushed to `main`, update the package version in `package.json` and `package-lock.json` so Agents can identify the installed skill revision.
 
 ## Files
 

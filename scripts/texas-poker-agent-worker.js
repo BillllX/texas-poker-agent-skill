@@ -444,14 +444,14 @@ Model name: ${settings.modelName}
 
 Return exactly one JSON object and nothing else.
 No Markdown. No code fences. No comments.
-The reasoning field must be concise Chinese.
+The reasoning field must be concise.
 Use only facts in the request. Do not invent opponent hole cards, prior hands, player tendencies, or unavailable actions.
 
 Current legalActions for this exact decision:
 ${JSON.stringify(request.legalActions || [])}
 
 Required JSON schema:
-{"action":{"type":"fold|check|call|bet|raise","amount":number_if_and_only_if_bet_or_raise},"reasoning":"中文简短解释"}
+{"action":{"type":"fold|check|call|bet|raise","amount":number_if_and_only_if_bet_or_raise},"reasoning":"brief explanation"}
 
 General action shapes:
 - fold:  {"type":"fold"}
@@ -661,7 +661,7 @@ function withStrictJsonReminder(prompt) {
 
 The previous response did not contain parseable JSON.
 Return exactly one JSON object with this shape and no other text:
-{"action":{"type":"fold|check|call|bet|raise"},"reasoning":"中文简短解释"}`;
+{"action":{"type":"fold|check|call|bet|raise"},"reasoning":"brief explanation"}`;
 }
 
 function parseModelJson(text) {

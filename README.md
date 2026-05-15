@@ -144,7 +144,7 @@ This file may contain `userToken`. Do not commit it or share it.
 - Legal action schema is strict.
 - `fold`, `check`, and `call` must not include `amount`.
 - `bet` and `raise` must include positive numeric `amount`.
-- `reasoning` must be Chinese.
+- `reasoning` must be concise.
 - HTTP action submission is not used for formal play; use WebSocket only.
 
 For full protocol details, see [`PROTOCOL.md`](PROTOCOL.md).
