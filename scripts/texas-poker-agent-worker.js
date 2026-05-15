@@ -513,10 +513,10 @@ async function callOpenAiCompatible(prompt) {
 
 async function callAnthropicCompatible(prompt) {
   try {
-    return parseModelJson(extractTextFromAnthropic(await requestAnthropicCompatible(prompt)));
+    return parseModelJson(extractTextFromAnthropic(await requestAnthropicCompatible(prompt), "anthropic-compatible"));
   } catch (error) {
     console.warn("[llm] anthropic-compatible parse failed; retrying once with thinking disabled:", error.message);
-    return parseModelJson(extractTextFromAnthropic(await requestAnthropicCompatible(prompt)));
+    return parseModelJson(extractTextFromAnthropic(await requestAnthropicCompatible(prompt), "anthropic-compatible-retry"));
   }
 }
 
@@ -545,6 +545,15 @@ async function requestAnthropicCompatible(prompt) {
 }
 
 async function callMiniMax(prompt) {
+  try {
+    return parseModelJson(extractTextFromAnthropic(await requestMiniMax(prompt), "minimax"));
+  } catch (error) {
+    console.warn("[llm] minimax parse failed; retrying once with strict JSON reminder:", error.message);
+    return parseModelJson(extractTextFromAnthropic(await requestMiniMax(withStrictJsonReminder(prompt)), "minimax-retry"));
+  }
+}
+
+async function requestMiniMax(prompt) {
   const response = await fetch(`${settings.minimaxBaseUrl}/messages`, {
     method: "POST",
     headers: {
@@ -563,8 +572,7 @@ async function callMiniMax(prompt) {
   if (!response.ok) {
     throw new Error(`MiniMax request failed: ${response.status} ${await response.text()}`);
   }
-  const data = await response.json();
-  return parseModelJson(extractTextFromAnthropic(data));
+  return response.json();
 }
 
 async function callCommandProvider(prompt, context) {
@@ -608,7 +616,7 @@ async function callCommandProvider(prompt, context) {
   return parseModelJson(outputText);
 }
 
-function extractTextFromAnthropic(data) {
+function extractTextFromAnthropic(data, label = "anthropic-compatible") {
   const blocks = Array.isArray(data?.content) ? data.content : [];
   const text = blocks
     .filter((block) => block?.type === "text" && typeof block.text === "string")
@@ -616,9 +624,11 @@ function extractTextFromAnthropic(data) {
     .join("\n")
     .trim();
   if (text) {
+    debugAnthropicExtraction(label, blocks, "using text block");
     return text;
   }
 
+  debugAnthropicExtraction(label, blocks, "no text block; checking thinking block");
   const thinking = blocks
     .filter((block) => block?.type === "thinking")
     .map((block) => block.text || block.thinking || "")
@@ -630,7 +640,28 @@ function extractTextFromAnthropic(data) {
   if (thinking.trim()) {
     return thinking;
   }
+  debugAnthropicExtraction(label, blocks, "no text or thinking content");
   throw new Error("Model response did not contain text JSON.");
+}
+
+function debugAnthropicExtraction(label, blocks, reason) {
+  const summary = blocks.map((block) => ({
+    type: block?.type || "unknown",
+    textLength: typeof block?.text === "string" ? block.text.length : 0,
+    thinkingLength: typeof block?.thinking === "string" ? block.thinking.length : 0,
+  }));
+  const message = `[llm:${label}] ${reason}; content blocks: ${JSON.stringify(summary)}`;
+  if (process.env.LLM_DEBUG === "1" || reason !== "using text block") {
+    console.warn(message);
+  }
+}
+
+function withStrictJsonReminder(prompt) {
+  return `${prompt}
+
+The previous response did not contain parseable JSON.
+Return exactly one JSON object with this shape and no other text:
+{"action":{"type":"fold|check|call|bet|raise"},"reasoning":"中文简短解释"}`;
 }
 
 function parseModelJson(text) {
