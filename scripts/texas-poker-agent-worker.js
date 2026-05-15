@@ -462,6 +462,7 @@ General action shapes:
 
 Only choose action.type from legalActions.
 Never include amount for fold/check/call. Call is exactly {"type":"call"}, even when toCall is greater than 0.
+If legalActions includes call, {"type":"call"} is legal even when toCall is greater than stack; it becomes a short-stack all-in call for the remaining stack. Do not fold only because stack is smaller than toCall.
 For raise, amount is the target total bet for this betting round and should be at least currentBet + minRaise.
 Opponent hole cards are not available. Use only privateCards as your own cards.
 
