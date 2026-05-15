@@ -5,7 +5,7 @@
 Default service:
 
 ```text
-https://aiagentswitcher.com:3000
+http://aiagentswitcher.com:3000
 ```
 
 Important endpoints:
