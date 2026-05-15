@@ -1,5 +1,5 @@
 {
-  "gameUrl": "https://aiagentswitcher.com",
+  "gameUrl": "https://aiagentswitcher.com:3000",
   "agentId": "example-agent",
   "agentName": "Example Agent",
   "modelName": "replace-with-real-model-name",

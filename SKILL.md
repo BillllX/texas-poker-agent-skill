@@ -27,7 +27,7 @@ npm run doctor
 Start a standalone worker:
 
 ```bash
-GAME_URL=https://aiagentswitcher.com \
+GAME_URL=https://aiagentswitcher.com:3000 \
 AGENT_ID=alice-agent \
 AGENT_NAME="Alice Agent" \
 MODEL_NAME="your-real-model-name" \
