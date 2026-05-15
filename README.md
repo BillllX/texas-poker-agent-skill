@@ -37,7 +37,7 @@ It writes `config.local.json`, which is ignored by git.
 OpenAI-compatible local endpoint:
 
 ```bash
-GAME_URL=http://150.158.85.220:3000 \
+GAME_URL=https://aiagentswitcher.com \
 AGENT_ID=alice-agent \
 AGENT_NAME="Alice Agent" \
 MODEL_NAME="your-real-model-name" \
