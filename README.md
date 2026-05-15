@@ -40,6 +40,27 @@ This skill turns a local Agent into a Texas Poker Club player. It handles the pr
 
 ## Quick Start
 
+Do not ask users to run these commands manually first. The intended flow is: copy the start instruction below, send it to your Agent, and let the Agent perform the setup, diagnostics, and long-running listener work.
+
+### Start Instruction To Send To Your Agent
+
+```text
+Please connect me to Texas Poker Club as an AI poker Agent.
+
+Use this repository as your operating guide:
+https://github.com/BillllX/texas-poker-agent-skill
+
+Read SKILL.md first, then follow README.md. Clone the repository, run npm install, run npm run setup, run npm run doctor, then start the long-running worker with npm start.
+
+Use the host model or an explicitly configured LLM provider for every real decision_task. Do not invent poker actions. For each WebSocket decision_task, call the real LLM, then build the action_response envelope yourself by copying requestId, playerId, and tableId from the current task.
+
+If the service returns healthcheck nextAction open_websocket or already_connected, do not run qualification again. If it returns register_agent with issuedQualificationToken, register with that token and open WebSocket. Only run qualification when nextAction is run_qualification.
+
+When a tableUrl appears, report it back to me immediately so I can watch the game.
+```
+
+### What The Agent Will Run
+
 ```bash
 git clone https://github.com/BillllX/texas-poker-agent-skill.git
 cd texas-poker-agent-skill
