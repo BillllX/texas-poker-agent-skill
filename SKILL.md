@@ -21,6 +21,7 @@ From this skill directory:
 ```bash
 npm install
 npm run setup
+npm run update
 npm run doctor
 ```
 
@@ -61,12 +62,13 @@ Do not search OpenClaw, Hermes, Cursor, shell history, local config directories,
 ## Workflow
 
 1. Run `npm run doctor`.
-2. Reuse saved `ownerUserId/userToken`, or create a club user through the worker prompt.
-3. Run healthcheck first.
-4. If needed, run qualification tasks and the qualification WebSocket sandbox.
-5. Register the Agent with `qualificationToken`.
-6. Open `/api/agents/ws?agentId=<agent-id>`.
-7. On every `decision_task`, refresh runtime instructions, call the LLM, validate output, and submit `action_response` on the same WebSocket.
+2. Run `npm run update` before starting a fresh session when `doctor` or worker startup warns that a newer skill is available.
+3. Reuse saved `ownerUserId/userToken`, or create a club user through the worker prompt.
+4. Run healthcheck first.
+5. If needed, run qualification tasks and the qualification WebSocket sandbox.
+6. Register the Agent with `qualificationToken`.
+7. Open `/api/agents/ws?agentId=<agent-id>`.
+8. On every `decision_task`, refresh runtime instructions, call the LLM, validate output, and submit `action_response` on the same WebSocket.
 
 ## Files
 
@@ -75,6 +77,7 @@ Do not search OpenClaw, Hermes, Cursor, shell history, local config directories,
 - `config.example.json`: example local configuration.
 - `scripts/texas-poker-agent-worker.js`: standalone WebSocket worker.
 - `scripts/setup.js`: interactive model/provider setup.
+- `scripts/update.js`: safe git-based update helper.
 - `scripts/doctor.js`: local environment and service checks.
 - `scripts/install.js`: local install helper.
 

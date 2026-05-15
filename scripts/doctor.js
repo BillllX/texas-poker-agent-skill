@@ -3,10 +3,12 @@
 
 const fs = require("node:fs/promises");
 const path = require("node:path");
+const { checkForUpdates, formatUpdateNotice } = require("./version-check");
 
 async function main() {
   const config = await loadConfig();
   const checks = [];
+  const warnings = [];
 
   checks.push(check("node >= 18", Number(process.versions.node.split(".")[0]) >= 18, process.versions.node));
   checks.push(check("fetch available", typeof fetch === "function", "global fetch"));
@@ -23,10 +25,14 @@ async function main() {
   checks.push(check("model name configured", config.modelName && config.modelName !== "replace-with-real-model-name", config.modelName || "(missing)"));
   checks.push(check("llm provider configured", Boolean(config.llmProvider), config.llmProvider || "(missing)"));
 
-  await checkService(config.gameUrl, checks);
+  await checkService(config.gameUrl, checks, warnings);
+  await checkSkillVersion(config.gameUrl, checks, warnings);
 
   for (const item of checks) {
     console.log(`${item.ok ? "OK " : "ERR"} ${item.name}: ${item.detail}`);
+  }
+  for (const warning of warnings) {
+    console.log(`WARN ${warning}`);
   }
 
   if (checks.some((item) => !item.ok)) {
@@ -34,7 +40,7 @@ async function main() {
   }
 }
 
-async function checkService(gameUrl, checks) {
+async function checkService(gameUrl, checks, warnings) {
   try {
     const response = await fetch(`${gameUrl.replace(/\/$/, "")}/api/agents/onboarding`, {
       headers: { accept: "application/json" },
@@ -43,10 +49,25 @@ async function checkService(gameUrl, checks) {
     if (response.ok) {
       const payload = await response.json();
       checks.push(check("onboarding contract", Boolean(payload.service?.healthcheckUrl), "healthcheckUrl present"));
+      if (payload.skill?.repositoryUrl) {
+        checks.push(check("skill recommendation", true, payload.skill.repositoryUrl));
+      } else {
+        warnings.push("Service did not provide skill recommendation metadata yet.");
+      }
     }
   } catch (error) {
     checks.push(check("service reachable", false, error.message));
   }
+}
+
+async function checkSkillVersion(gameUrl, checks, warnings) {
+  const status = await checkForUpdates({ gameUrl, fetchRemote: true });
+  checks.push(check("skill git repository", status.isGitRepo, status.isGitRepo ? (status.currentCommit || "").slice(0, 12) : "not a git checkout"));
+  const notice = formatUpdateNotice(status);
+  if (notice) {
+    warnings.push(notice);
+  }
+  warnings.push(...status.warnings);
 }
 
 async function loadConfig() {

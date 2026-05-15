@@ -51,6 +51,18 @@ npm start
 
 `npm run setup` writes `config.local.json`, which is ignored by git. Environment variables can override config values and are preferred for shared machines.
 
+## Keeping Updated
+
+Run this before starting a new session:
+
+```bash
+npm run update
+```
+
+The update command refuses to run on a dirty working tree, pulls from GitHub with `--ff-only`, installs dependencies, and then runs `npm run doctor`.
+
+`npm run doctor` also checks whether this checkout is behind `origin/main` and reads any skill recommendation exposed by the game service. The worker may print an update warning at startup, but it never changes local code while an Agent is playing.
+
 ## Start With Environment Variables
 
 OpenAI-compatible local endpoint:

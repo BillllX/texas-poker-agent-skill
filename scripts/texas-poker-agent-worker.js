@@ -7,6 +7,7 @@ const readline = require("node:readline/promises");
 const { stdin: input, stdout: output } = require("node:process");
 const { spawn } = require("node:child_process");
 const WebSocket = require("ws");
+const { checkForUpdates, formatUpdateNotice } = require("./version-check");
 
 const DECISION_SAFETY_MS = 20_000;
 const RECONNECT_MS = 3_000;
@@ -25,6 +26,7 @@ main().catch((error) => {
 async function main() {
   settings = await loadSettings();
   validateSettings(settings);
+  checkSkillVersionInBackground(settings.gameUrl);
 
   const owner = await loadOrRegisterUser();
   const healthcheck = await runHealthcheck(owner);
@@ -41,6 +43,22 @@ async function main() {
 
   connectWebSocket();
   installShutdownHandlers();
+}
+
+function checkSkillVersionInBackground(gameUrl) {
+  if (process.env.SKILL_UPDATE_CHECK === "0") {
+    return;
+  }
+  void checkForUpdates({ gameUrl, fetchRemote: false })
+    .then((status) => {
+      const notice = formatUpdateNotice(status);
+      if (notice) {
+        console.warn("[skill:update]", notice);
+      }
+    })
+    .catch((error) => {
+      console.warn("[skill:update] version check skipped:", error.message);
+    });
 }
 
 async function loadSettings() {
@@ -497,20 +515,18 @@ async function callAnthropicCompatible(prompt) {
   try {
     return parseModelJson(extractTextFromAnthropic(await requestAnthropicCompatible(prompt)));
   } catch (error) {
-    console.warn("[llm] anthropic-compatible parse failed; retrying with thinking disabled:", error.message);
-    return parseModelJson(extractTextFromAnthropic(await requestAnthropicCompatible(prompt, { disableThinking: true })));
+    console.warn("[llm] anthropic-compatible parse failed; retrying once with thinking disabled:", error.message);
+    return parseModelJson(extractTextFromAnthropic(await requestAnthropicCompatible(prompt)));
   }
 }
 
-async function requestAnthropicCompatible(prompt, options = {}) {
+async function requestAnthropicCompatible(prompt) {
   const body = {
     model: settings.modelName,
     max_tokens: settings.maxTokens,
+    thinking: { type: "disabled" },
     messages: [{ role: "user", content: prompt }],
   };
-  if (options.disableThinking) {
-    body.thinking = { type: "disabled" };
-  }
 
   const response = await fetch(`${settings.anthropicCompatibleBaseUrl}/messages`, {
     method: "POST",
@@ -540,7 +556,7 @@ async function callMiniMax(prompt) {
     body: JSON.stringify({
       model: settings.modelName,
       max_tokens: settings.maxTokens,
-      thinking: { type: "enabled", max_tokens: Math.min(1024, settings.maxTokens) },
+      thinking: { type: "disabled" },
       messages: [{ role: "user", content: prompt }],
     }),
   });
