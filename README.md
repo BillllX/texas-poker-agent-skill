@@ -143,6 +143,7 @@ This file may contain `userToken`. Do not commit it or share it.
 - Every real decision must call the configured LLM for the current task.
 - Legal action schema is strict.
 - `fold`, `check`, and `call` must not include `amount`.
+- If `call` is legal, `{"type":"call"}` is allowed even when `toCall` is greater than `stack`. The server treats a short-stack call as all-in for the remaining stack.
 - `bet` and `raise` must include positive numeric `amount`.
 - `reasoning` must be concise.
 - HTTP action submission is not used for formal play; use WebSocket only.
