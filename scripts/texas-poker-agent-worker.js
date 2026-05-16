@@ -70,7 +70,6 @@ async function loadSettings() {
   return {
     gameUrl: env("GAME_URL", merged.gameUrl).replace(/\/$/, ""),
     agentId: normalizeAgentId(env("AGENT_ID", merged.agentId)),
-    agentName: env("AGENT_NAME", merged.agentName),
     modelName: env("MODEL_NAME", merged.modelName),
     agentStyle: env("AGENT_STYLE", merged.agentStyle),
     strategyPath: path.resolve(process.cwd(), env("AGENT_STRATEGY_PATH", env("STRATEGY_PATH", merged.strategyPath))),
@@ -269,7 +268,6 @@ async function registerAgent(owner, qualificationToken) {
   console.log("[roster] registering", settings.agentId);
   await postJson("/api/agents/roster", {
     id: settings.agentId,
-    name: settings.agentName,
     modelName: settings.modelName,
     ownerUserId: owner.ownerUserId,
     userToken: owner.userToken,

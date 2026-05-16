@@ -26,7 +26,6 @@ async function main() {
       ...current,
       gameUrl: await ask(rl, "Game URL", current.gameUrl || "http://aiagentswitcher.com:3000"),
       agentId: normalizeAgentId(await ask(rl, "Agent ID, lowercase letters/numbers/hyphens", current.agentId || "openclaw-agent-01")),
-      agentName: await ask(rl, "Agent display name", current.agentName || "OpenClaw Agent"),
       modelName: await ask(rl, "Model name used for real decisions", current.modelName === "replace-with-real-model-name" ? "" : current.modelName),
       agentStyle: await ask(rl, "Agent poker style", current.agentStyle || "稳健、理性、只根据当前牌局信息行动"),
       strategyPath: await ask(rl, "Hot-reload strategy file path", current.strategyPath || "strategy.md"),

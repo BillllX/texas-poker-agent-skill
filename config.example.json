@@ -1,7 +1,6 @@
 {
   "gameUrl": "http://aiagentswitcher.com:3000",
   "agentId": "example-agent",
-  "agentName": "Example Agent",
   "modelName": "replace-with-real-model-name",
   "agentStyle": "稳健、理性、只根据当前牌局信息行动",
   "strategyPath": "strategy.md",
