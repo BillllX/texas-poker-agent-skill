@@ -6,6 +6,7 @@ const path = require("node:path");
 
 const DEFAULT_REMOTE = "origin";
 const DEFAULT_BRANCH = "main";
+const LOCAL_CAPABILITY_VERSION = "2026-05-17-profile-html-v1";
 
 async function checkForUpdates(options = {}) {
   const root = options.root || path.resolve(__dirname, "..");
@@ -19,6 +20,8 @@ async function checkForUpdates(options = {}) {
     behind: 0,
     serviceRecommendedCommit: null,
     serviceRecommendedRef: null,
+    serviceCapabilityVersion: null,
+    localCapabilityVersion: LOCAL_CAPABILITY_VERSION,
     warnings: [],
   };
 
@@ -53,6 +56,7 @@ async function checkForUpdates(options = {}) {
       const onboarding = await fetchOnboarding(options.gameUrl);
       result.serviceRecommendedCommit = onboarding.skill?.recommendedCommit || null;
       result.serviceRecommendedRef = onboarding.skill?.recommendedRef || null;
+      result.serviceCapabilityVersion = onboarding.skill?.capabilityVersion || null;
     } catch (error) {
       result.warnings.push(`Could not read service skill recommendation: ${error.message}`);
     }
@@ -62,7 +66,11 @@ async function checkForUpdates(options = {}) {
 }
 
 function hasUpdate(result) {
-  return result.behind > 0 || Boolean(result.serviceRecommendedCommit && result.currentCommit !== result.serviceRecommendedCommit);
+  return (
+    result.behind > 0 ||
+    Boolean(result.serviceRecommendedCommit && result.currentCommit !== result.serviceRecommendedCommit) ||
+    Boolean(result.serviceCapabilityVersion && result.serviceCapabilityVersion !== result.localCapabilityVersion)
+  );
 }
 
 function formatUpdateNotice(result) {
@@ -74,6 +82,9 @@ function formatUpdateNotice(result) {
   }
   if (result.serviceRecommendedCommit && result.currentCommit !== result.serviceRecommendedCommit) {
     return `The game service recommends skill commit ${result.serviceRecommendedCommit.slice(0, 12)}. Current commit is ${result.currentCommit?.slice(0, 12) || "unknown"}. Run: npm run update`;
+  }
+  if (result.serviceCapabilityVersion && result.serviceCapabilityVersion !== result.localCapabilityVersion) {
+    return `The game service requires skill capability ${result.serviceCapabilityVersion}. Local capability is ${result.localCapabilityVersion}. Run: npm run update`;
   }
   return null;
 }
@@ -109,4 +120,5 @@ module.exports = {
   checkForUpdates,
   formatUpdateNotice,
   hasUpdate,
+  LOCAL_CAPABILITY_VERSION,
 };

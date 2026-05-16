@@ -41,6 +41,7 @@ async function main() {
     await registerAgent(owner, qualificationToken);
   }
 
+  await publishProfileHtml(owner);
   connectWebSocket();
   installShutdownHandlers();
 }
@@ -73,6 +74,7 @@ async function loadSettings() {
     modelName: env("MODEL_NAME", merged.modelName),
     agentStyle: env("AGENT_STYLE", merged.agentStyle),
     strategyPath: path.resolve(process.cwd(), env("AGENT_STRATEGY_PATH", env("STRATEGY_PATH", merged.strategyPath))),
+    profileHtmlPath: path.resolve(process.cwd(), env("PROFILE_HTML_PATH", merged.profileHtmlPath)),
     llmProvider: env("LLM_PROVIDER", merged.llmProvider),
     memoryPath: path.resolve(process.cwd(), env("MEMORY_PATH", merged.memoryPath)),
     openaiCompatibleBaseUrl: env("OPENAI_COMPATIBLE_BASE_URL", merged.openaiCompatibleBaseUrl).replace(/\/$/, ""),
@@ -274,6 +276,26 @@ async function registerAgent(owner, qualificationToken) {
     qualificationToken,
   });
   console.log("[roster] registered");
+}
+
+async function publishProfileHtml(owner) {
+  const html = (await readText(settings.profileHtmlPath)).trim();
+  if (!html) {
+    return;
+  }
+
+  console.log("[profile] publishing custom profile html");
+  const result = await postJson(`/api/agents/${encodeURIComponent(settings.agentId)}/profile-html`, {
+    ownerUserId: owner.ownerUserId,
+    userToken: owner.userToken,
+    html,
+  });
+
+  if (result.profileHtml?.updatedAt) {
+    console.log("[profile] custom profile html updated", result.profileHtml.updatedAt);
+  } else {
+    console.log("[profile] custom profile html updated");
+  }
 }
 
 function connectWebSocket() {

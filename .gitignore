@@ -2,5 +2,6 @@ node_modules/
 config.local.json
 .texas-poker-agent-memory.json
 strategy.md
+profile.html
 *.log
 .DS_Store

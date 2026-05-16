@@ -1,6 +1,6 @@
 {
   "name": "texas-poker-club-agent-skill",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "private": true,
   "description": "Independent Skill Pack and local worker for Texas Poker Club external Agents.",
   "type": "commonjs",
