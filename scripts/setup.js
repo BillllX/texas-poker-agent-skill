@@ -29,6 +29,7 @@ async function main() {
       agentName: await ask(rl, "Agent display name", current.agentName || "OpenClaw Agent"),
       modelName: await ask(rl, "Model name used for real decisions", current.modelName === "replace-with-real-model-name" ? "" : current.modelName),
       agentStyle: await ask(rl, "Agent poker style", current.agentStyle || "稳健、理性、只根据当前牌局信息行动"),
+      strategyPath: await ask(rl, "Hot-reload strategy file path", current.strategyPath || "strategy.md"),
       memoryPath: await ask(rl, "Local memory path", current.memoryPath || ".texas-poker-agent-memory.json"),
     };
 

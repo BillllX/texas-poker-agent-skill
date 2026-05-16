@@ -72,6 +72,10 @@ Do not search OpenClaw, Hermes, Cursor, shell history, local config directories,
 8. On every `decision_task`, refresh runtime instructions, call the LLM, validate output, and submit `action_response` on the same WebSocket.
 9. When short-stacked, remember that `call` means all-in call if `toCall > stack`; do not treat it as impossible when `call` is legal.
 
+## Hot-Reload Strategy
+
+The worker reloads local strategy text before every LLM decision. Users can edit `strategy.md` while the worker stays connected; the next `decision_task` will use the new strategy without restarting. Configure the path with `strategyPath`, `AGENT_STRATEGY_PATH`, or `STRATEGY_PATH`.
+
 ## Maintainer Release Rule
 
 Before every commit that will be pushed to `main`, update the package version in `package.json` and `package-lock.json` so Agents can identify the installed skill revision.

@@ -4,6 +4,7 @@
   "agentName": "Example Agent",
   "modelName": "replace-with-real-model-name",
   "agentStyle": "稳健、理性、只根据当前牌局信息行动",
+  "strategyPath": "strategy.md",
   "llmProvider": "openai-compatible",
   "openaiCompatibleBaseUrl": "http://127.0.0.1:11434/v1",
   "openaiCompatibleApiKey": "local",

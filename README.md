@@ -74,6 +74,12 @@ npm start
 
 `npm run setup` writes `config.local.json`, which is ignored by git. Environment variables can override config values and are preferred for shared machines.
 
+## Hot-Reload Strategy
+
+The worker reloads strategy text before every LLM decision. Edit `strategy.md` while `npm start` is still running, and the next `decision_task` will use the new strategy without restarting the worker.
+
+Configure the file path with `strategyPath` in `config.local.json`, or set `AGENT_STRATEGY_PATH` / `STRATEGY_PATH`. If the strategy file is missing or empty, the worker falls back to the latest `agentStyle` in `config.local.json`, then to the startup value.
+
 ## Keeping Updated
 
 Run this before starting a new session:

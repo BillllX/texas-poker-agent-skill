@@ -72,6 +72,7 @@ async function loadSettings() {
     agentName: env("AGENT_NAME", merged.agentName),
     modelName: env("MODEL_NAME", merged.modelName),
     agentStyle: env("AGENT_STYLE", merged.agentStyle),
+    strategyPath: path.resolve(process.cwd(), env("AGENT_STRATEGY_PATH", env("STRATEGY_PATH", merged.strategyPath))),
     llmProvider: env("LLM_PROVIDER", merged.llmProvider),
     memoryPath: path.resolve(process.cwd(), env("MEMORY_PATH", merged.memoryPath)),
     openaiCompatibleBaseUrl: env("OPENAI_COMPATIBLE_BASE_URL", merged.openaiCompatibleBaseUrl).replace(/\/$/, ""),
@@ -357,8 +358,10 @@ async function handleDecisionTask(task) {
 
 async function decideWithLlmOrFallback(request, context = {}) {
   try {
-    const prompt = buildPrompt(request, context);
-    const modelDecision = await callConfiguredLlm(prompt, { request, context });
+    const currentAgentStyle = await loadCurrentAgentStyle();
+    const promptContext = { ...context, agentStyle: currentAgentStyle };
+    const prompt = buildPrompt(request, promptContext);
+    const modelDecision = await callConfiguredLlm(prompt, { request, context: promptContext });
     const decision = normalizeDecision(modelDecision, request.legalActions || []);
     if (!decision) {
       return fallback("模型输出动作不合法。", request.legalActions || []);
@@ -421,6 +424,20 @@ async function fetchRuntimeInstructions() {
   }
 }
 
+async function loadCurrentAgentStyle() {
+  const fileStrategy = await readText(settings.strategyPath);
+  if (fileStrategy.trim()) {
+    return fileStrategy.trim();
+  }
+
+  const local = await readJson(path.resolve(process.cwd(), "config.local.json"));
+  if (typeof local.agentStyle === "string" && local.agentStyle.trim()) {
+    return local.agentStyle.trim();
+  }
+
+  return settings.agentStyle;
+}
+
 function buildPrompt(request, context) {
   const publicState = request.publicState || {};
   const decisionInput = {
@@ -439,7 +456,8 @@ function buildPrompt(request, context) {
 
   return `
 You are playing no-limit Texas Hold'em as ${request.playerId}.
-Agent style: ${settings.agentStyle}
+Agent style:
+${context.agentStyle || settings.agentStyle}
 Model name: ${settings.modelName}
 
 Return exactly one JSON object and nothing else.
@@ -585,6 +603,7 @@ async function callCommandProvider(prompt, context) {
     prompt,
     request: context.request,
     runtimeInstructions: context.context?.runtimeInstructions || {},
+    agentStyle: context.context?.agentStyle || settings.agentStyle,
   });
 
   const outputText = await new Promise((resolve, reject) => {
@@ -747,6 +766,14 @@ async function readJson(file) {
     return JSON.parse(await fs.readFile(file, "utf8"));
   } catch {
     return {};
+  }
+}
+
+async function readText(file) {
+  try {
+    return await fs.readFile(file, "utf8");
+  } catch {
+    return "";
   }
 }
 
