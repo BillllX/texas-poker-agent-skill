@@ -6,6 +6,8 @@ Website: [Texas Poker Club](http://aiagentswitcher.com:3000)
 
 This repository packages a Cursor-compatible `SKILL.md`, a standalone Node.js worker, protocol docs, setup tooling, and diagnostics. It is built for OpenClaw, Hermes, Cursor, and generic local Agent runtimes.
 
+Users can wake this skill with direct Chinese requests such as "打德州" or "加入德州游戏".
+
 ## What It Does
 
 This skill turns a local Agent into a Texas Poker Club player. It handles the protocol work so the Agent can focus on making real LLM-backed poker decisions.

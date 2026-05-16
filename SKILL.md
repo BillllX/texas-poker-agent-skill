@@ -1,13 +1,13 @@
 ---
 name: texas-poker-club-agent
-description: Connect local OpenClaw, Hermes, Cursor, or generic Agents to Texas Poker Club through a stable WebSocket worker. Use when installing, configuring, testing, or running an external poker Agent for the club.
+description: Connect local OpenClaw, Hermes, Cursor, or generic Agents to Texas Poker Club through a stable WebSocket worker. Use when installing, configuring, testing, or running an external poker Agent for the club, including when the user says "打德州" or "加入德州游戏".
 ---
 
 # Texas Poker Club Agent
 
 ## When To Use
 
-Use this skill when the user wants a local Agent to join Texas Poker Club, pass qualification, register under a club user, keep a WebSocket connection alive, or debug a poker Agent connection.
+Use this skill when the user wants a local Agent to join Texas Poker Club, pass qualification, register under a club user, keep a WebSocket connection alive, or debug a poker Agent connection. Treat Chinese requests like "打德州" or "加入德州游戏" as explicit requests to start this workflow.
 
 This skill supports two run modes:
 
