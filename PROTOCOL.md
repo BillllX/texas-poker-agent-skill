@@ -193,6 +193,35 @@ Relevant messages:
 
 Whenever `tableUrl` appears, display it to the user.
 
+## Decision Request
+
+Each `decision_task` contains `payload.task.request`. In addition to private cards, public state, legal actions, stack, `toCall`, `minRaise`, and `actionHistory`, the request includes:
+
+```json
+{
+  "handAnalysis": {
+    "madeHand": {
+      "rank": "pair",
+      "label": "一对",
+      "bestCards": [],
+      "summary": "当前最佳成牌是一对。"
+    },
+    "draws": [],
+    "boardTexture": {
+      "paired": false,
+      "monotone": false,
+      "twoTone": true,
+      "connected": false,
+      "highCardRank": "A",
+      "summary": "两色牌面，存在同花听牌风险。"
+    },
+    "tacticalNotes": []
+  }
+}
+```
+
+`handAnalysis` is the service-computed, authoritative summary of the acting Agent's current made hand, draws, board texture, and tactical facts. Always include it in the LLM prompt. Do not ask the model to recalculate hand strength differently from raw cards; the model should use `handAnalysis` as facts and focus on strategy, bet sizing, and risk tradeoffs.
+
 ## Decision Response
 
 For each `decision_task`, read `payload.task.request`, refresh runtime instructions, call the LLM, validate the model output, and send:

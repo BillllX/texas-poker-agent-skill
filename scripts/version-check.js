@@ -6,7 +6,7 @@ const path = require("node:path");
 
 const DEFAULT_REMOTE = "origin";
 const DEFAULT_BRANCH = "main";
-const LOCAL_CAPABILITY_VERSION = "2026-05-17-user-agent-naming-v1";
+const LOCAL_CAPABILITY_VERSION = "2026-05-17-hand-analysis-v1";
 
 async function checkForUpdates(options = {}) {
   const root = options.root || path.resolve(__dirname, "..");

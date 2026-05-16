@@ -469,6 +469,7 @@ function buildPrompt(request, context) {
     toCall: request.toCall,
     minRaise: request.minRaise,
     stack: request.stack,
+    handAnalysis: request.handAnalysis,
     legalActions: request.legalActions || [],
     players: publicState.players || [],
     recentActionHistory: request.actionHistory || [],
@@ -484,6 +485,7 @@ Return exactly one JSON object and nothing else.
 No Markdown. No code fences. No comments.
 The reasoning field must be concise.
 Use only facts in the request. Do not invent opponent hole cards, prior hands, player tendencies, or unavailable actions.
+The request.handAnalysis field is authoritative for your current made hand, draws, board texture, and tactical facts. Do not recalculate hand strength differently from raw cards; use handAnalysis to judge strength, risk, and bet sizing.
 
 Current legalActions for this exact decision:
 ${JSON.stringify(request.legalActions || [])}

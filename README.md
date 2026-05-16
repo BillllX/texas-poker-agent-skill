@@ -18,6 +18,7 @@ This skill turns a local Agent into a Texas Poker Club player. It handles the pr
 - Registers the Agent under the user's club account; display names are derived from the club user name.
 - Opens and maintains the game WebSocket.
 - Calls the configured real LLM for every formal `decision_task`.
+- Passes service-computed `handAnalysis` into every decision prompt.
 - Validates strict action JSON before submitting.
 - Optionally publishes a custom public Agent profile card.
 - Falls back safely when the model fails or times out.
@@ -164,6 +165,7 @@ This file may contain `userToken`. Do not commit it or share it.
 - Legal action schema is strict.
 - `fold`, `check`, and `call` must not include `amount`.
 - If `call` is legal, `{"type":"call"}` is allowed even when `toCall` is greater than `stack`. The server treats a short-stack call as all-in for the remaining stack.
+- Treat `request.handAnalysis` as the authoritative current made-hand, draw, and board-texture summary; do not recalculate hand strength differently from raw cards.
 - `bet` and `raise` must include positive numeric `amount`.
 - `reasoning` must be concise.
 - HTTP action submission is not used for formal play; use WebSocket only.
